@@ -23,16 +23,16 @@ g = grid.connect() -- if there's a grid connected to slot 1 in DEVICES > GRID, c
 
 --[[ 0_0 ]]--
 delays = sequins{3,1,8,5,1,2,3,4,1,7,2,1,8,6,4,2} -- a sequencer of delay loop times, to be divided by 8
-delays.length = 6 -- let's start with the first 6 values
+delays.length = 8 -- let's start with the first 6 values
 
 --[[ 0_0 ]]--
-notes = sequins{400,451,525,555} -- a sequencer of note values, in hz
+notes = sequins{200,200 + 200/5,400,400 - 200/5} -- a sequencer of note values, in hz
 
 edit = 1 -- which step of the 'delays' sequins we're editing
 
 -- on/off for stepped sequence and chimes
-sequence = true
-chimes = true
+sequence = false
+chimes = false
 
 
 -- system clock tick
@@ -49,7 +49,8 @@ end
 -- sequence step forward
 -- advance the position and do something with the number
 step = function()
-  softcut.loop_end(1,delays()/8)
+  -- softcut.loop_end(1,delays()/8)
+  softcut.rate(1, delays()/8)
 end
 
 -- wind blows chimes play
@@ -78,9 +79,9 @@ end
 -- init runs first!
 function init()
   -- configure the synth --[[ 0_0 ]]--
-  engine.release(1)
-  engine.pw(0.5)
-  engine.cutoff(1000)
+  engine.release(2)
+  engine.pw(0.1)
+  engine.cutoff(800)
 
   -- configure the delay
   audio.level_cut(1.0)
@@ -148,10 +149,13 @@ end
 function key(n,z)
   if n==3 and z==1 then
     -- K3, on key down toggle chimes true/false
-    chimes = not chimes
+    -- chimes = not chimes
+    tones = {80,201,400,555,606}
+    engine.hz(tones[math.random(#tones)])
   elseif n==2 and z==1 then
     --[[ 0_0 ]]--
-    sequence = not sequence
+    -- sequence = not sequence
+    step()
   end
 end
 
